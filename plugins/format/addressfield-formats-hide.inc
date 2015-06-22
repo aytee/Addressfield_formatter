@@ -9,7 +9,7 @@ $plugin = array(
   'title' => t('Addressfield Formats: Hide all'),
   'format callback' => 'addressfield_formats_format_addressfield_formats_hide',
   'type' => 'address',
-  'weight' => 200,
+  'weight' => 100,
 );
 
 /**

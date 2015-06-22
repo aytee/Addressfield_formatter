@@ -32,7 +32,7 @@ function addressfield_formats_field_formatter_info() {
       'label' => t('Address Formats'),
       'field types' => array('addressfield'),
       'settings' => array(
-        'display' => 'full'
+        'display' => 'addressfield-formats-street'
       ),
     ),
   );
@@ -50,20 +50,27 @@ function addressfield_formats_field_formatter_settings_form($field, $instance, $
     '#title' => t('Address Format'),
     '#default_value' => $settings['display'],
     '#description' => t(''),
-    '#options' => array(
-      'addressfield-formats-full' => t('Full'),
-      'addressfield-formats-street' => t('Street, no locality or country'),
-      'addressfield-formats-city' => t('City only'),
-      'addressfield-formats-state' => t('State Only'),
-      'addressfield-formats-postal' => t('Postal Only'),
-      'addressfield-formats-country' => t('Country Only'),
-      'addressfield-formats-city-state' => t('City, State'),
-    ),
+    '#options' => _addressfield_formats_address_options(),
   );
 
   return $element;
 
 }
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function addressfield_formats_field_formatter_settings_summary($field, $instance, $view_mode) {
+
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $formats = _addressfield_formats_address_options();
+  $summary = t('Address Display: @display', array('@display' => $formats[$settings['display']]));
+
+  return $summary;
+}
+
 /**
  * Implements hook_field_formatter_view().
  */
@@ -75,6 +82,7 @@ function addressfield_formats_field_formatter_view($entity_type, $entity, $field
     case 'addressfield_formats_default':
       $handlers = array(
         'address',
+        'addressfield-formats-hide',
         $settings['display'],
       );
       foreach ($items as $delta => $address) {
@@ -92,4 +100,18 @@ function addressfield_formats_field_formatter_view($entity_type, $entity, $field
   }
 
   return $element;
+}
+
+/**
+ * Helper function to define addressfield_format_options.
+ */
+function _addressfield_formats_address_options() {
+  return array(
+    'addressfield-formats-street' => t('Street, no locality or country'),
+    'addressfield-formats-city' => t('City only'),
+    'addressfield-formats-state' => t('State Only'),
+    'addressfield-formats-postal' => t('Postal Only'),
+    'addressfield-formats-country' => t('Country Only'),
+    'addressfield-formats-city-state' => t('City, State'),
+  );
 }

@@ -1,0 +1,5 @@
+name = Addressfield Additional Formats
+description = Provides additional addressfield display formats
+core = 7.x
+
+dependencies[] = addressfield

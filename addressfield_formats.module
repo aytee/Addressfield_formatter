@@ -22,3 +22,74 @@ function addressfield_formats_ctools_plugin_type() {
   );
   return $plugins;
 }
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function addressfield_formats_field_formatter_info() {
+  return array(
+    'addressfield_formats_default' => array(
+      'label' => t('Address Formats'),
+      'field types' => array('addressfield'),
+      'settings' => array(
+        'display' => 'full'
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function addressfield_formats_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $element['display'] = array(
+    '#type' => 'select',
+    '#title' => t('Address Format'),
+    '#default_value' => $settings['display'],
+    '#description' => t(''),
+    '#options' => array(
+      'addressfield-formats-full' => t('Full'),
+      'addressfield-formats-street' => t('Street, no locality or country'),
+      'addressfield-formats-city' => t('City only'),
+      'addressfield-formats-state' => t('State Only'),
+      'addressfield-formats-postal' => t('Postal Only'),
+      'addressfield-formats-country' => t('Country Only'),
+      'addressfield-formats-city-state' => t('City, State'),
+    ),
+  );
+
+  return $element;
+
+}
+/**
+ * Implements hook_field_formatter_view().
+ */
+function addressfield_formats_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  $settings = $display['settings'];
+
+  switch ($display['type']) {
+    case 'addressfield_formats_default':
+      $handlers = array(
+        'address',
+        $settings['display'],
+      );
+      foreach ($items as $delta => $address) {
+        // Generate the address format.
+        $context = array(
+          'mode' => 'render',
+          'field' => $field,
+          'instance' => $instance,
+          'langcode' => $langcode,
+          'delta' => $delta,
+        );
+        $element[$delta] = addressfield_generate($address, $handlers, $context);
+      }
+      break;
+  }
+
+  return $element;
+}

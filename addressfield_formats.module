@@ -113,5 +113,6 @@ function _addressfield_formats_address_options() {
     'addressfield-formats-postal' => t('Postal Only'),
     'addressfield-formats-country' => t('Country Only'),
     'addressfield-formats-city-state' => t('City, State'),
+    'addressfield-formats-street-city-state-postal' => t('Street, City, State Postal'),
   );
 }
